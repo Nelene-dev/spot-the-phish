@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spot the Phish!</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8fafc;
+      color: #111827;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* ⭐ Logo styling */
+    .logo {
+      margin-bottom: 1rem;
+    }
+    .logo img {
+      max-width: 160px; /* Adjust as needed */
+      height: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 400px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .email {
+      background: #f1f5f9;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      margin: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover { background: #1d4ed8; }
+    .feedback {
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ⭐ Add your logo here -->
+  <div class="logo">
+    <img src="C:\Users\Nelene\Documents\Spot-the-Phish-Game\CIS Logo for Web_White-01.png" alt="CyberIntelligent Systems">
+  </div>
+
+  <div class="card">
+    <h2>🎣 Spot the Phish!</h2>
+    <p id="question-count"></p>
+    <div class="email" id="email-content"></div>
+    <div>
+      <button onclick="checkAnswer('phish')">🐟 Phish</button>
+      <button onclick="checkAnswer('legit')">✅ Legit</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <script>
+    const emails = [
+      {
+        sender: 'IT Support <support@micros0ft.com>',
+        subject: 'Urgent: Your account will be locked',
+        preview: 'Please click the link below to verify your password immediately.',
+        type: 'phish',
+        feedback: 'The sender domain is misspelled (micros0ft.com) — classic phishing trick!'
+      },
+      {
+        sender: 'HR Department <hr@yourcompany.com>',
+        subject: 'Holiday Party RSVP 🎉',
+        preview: 'Please confirm your attendance for the year-end celebration.',
+        type: 'legit',
+        feedback: 'All details check out and it’s from your verified company domain.'
+      },
+      {
+        sender: 'Finance <invoices@secure-payments.com>',
+        subject: 'Invoice Payment Overdue',
+        preview: 'Your invoice is overdue. Please open the attached file to avoid penalties.',
+        type: 'phish',
+        feedback: 'Legitimate companies rarely demand urgent payment via attachments.'
+      },
+      {
+        sender: 'Google <no-reply@google.com>',
+        subject: 'New login from Chrome on Windows',
+        preview: 'If this wasn’t you, review your activity here.',
+        type: 'legit',
+        feedback: 'This matches the real notification format from Google Security.'
+      },
+      {
+        sender: 'Charity Trust <donations@helpinghands.io>',
+        subject: 'Make a Christmas donation today',
+        preview: 'Click here to donate and make someone’s holiday brighter.',
+        type: 'phish',
+        feedback: 'Unexpected donation requests from unknown charities are a red flag.'
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadEmail() {
+      if (current >= emails.length) {
+        document.querySelector('.card').innerHTML = `
+          <h2>🎯 Game Over!</h2>
+          <p>You caught ${score} out of ${emails.length} phish.</p>
+          <p>Hackers don’t take a vacation — stay sharp this holiday season.</p>
+        `;
+        return;
+      }
+      const e = emails[current];
+      document.getElementById('email-content').innerHTML = `
+        <strong>From:</strong> ${e.sender}<br>
+        <strong>Subject:</strong> ${e.subject}<br>
+        <em>${e.preview}</em>
+      `;
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('question-count').textContent = `Email ${current + 1} of ${emails.length}`;
+    }
+
+    function checkAnswer(choice) {
+      const e = emails[current];
+      const feedback = document.getElementById('feedback');
+      if (choice === e.type) {
+        score++;
+        feedback.textContent = `✅ Correct! ${e.feedback}`;
+        feedback.style.color = 'green';
+      } else {
+        feedback.textContent = `❌ Nope! ${e.feedback}`;
+        feedback.style.color = 'red';
+      }
+      current++;
+      setTimeout(loadEmail, 2000);
+    }
+
+    loadEmail();
+  </script>
+
+</body>
+</html>
