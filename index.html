@@ -1,84 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spot the Phish!</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spot the Phish! — Holiday Heist</title>
+
+  <!-- Plus Jakarta Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8fafc;
-      color: #111827;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+    :root{
+      /* Brand colours */
+      --brand-main: #8A38F5;             /* main purple */
+      --brand-accent-start: #2290C7;     /* gradient start */
+      --brand-accent-end: #8A38F5;       /* gradient end */
+      --brand-danger: #EF4444;           /* red for phishing */
+      --bg-dark: #07070a;                /* almost black */
+      --panel-bg: rgba(255,255,255,0.03);
+      --card-bg: #0b0b0d;                /* slightly lighter than page bg for subtle depth */
+      --text: #e9eef7;                   /* very light gray body text */
+      --muted: #9aa7c0;
+      --glass: rgba(255,255,255,0.02);
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(2,6,23,0.6);
     }
 
-    /* ⭐ Logo styling */
-    .logo {
-      margin-bottom: 1rem;
-    }
-    .logo img {
-      max-width: 160px; /* Adjust as needed */
-      height: auto;
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(180deg, #030305 0%, var(--bg-dark) 100%);
+      color:var(--text);
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      box-sizing:border-box;
     }
 
+    .wrap{
+      width:100%;
+      max-width:980px;
+      display:flex;
+      gap:26px;
+      align-items:flex-start;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    /* Game card */
     .card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      width: 400px;
-      padding: 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
+      width:440px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:28px;
+      box-sizing:border-box;
+      text-align:center;
+      border: 1px solid rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px);
+      position:relative;
     }
-    .email {
-      background: #f1f5f9;
-      border-radius: 0.75rem;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      text-align: left;
+
+    /* Logo */
+    .logo{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:10px;
     }
-    button {
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      margin: 0.5rem;
-      cursor: pointer;
-      font-size: 1rem;
+    .logo img{
+      width:160px;
+      height:auto;
+      display:block;
+      filter: drop-shadow(0 8px 30px rgba(138,56,245,0.12));
     }
-    button:hover { background: #1d4ed8; }
-    .feedback {
-      font-weight: 600;
-      margin-top: 1rem;
+
+    .title h1{
+      margin:0;
+      font-size:20px;
+      color:var(--text);
+      font-weight:800;
+      letter-spacing:0.2px;
     }
+    .subtitle{
+      margin:8px 0 16px 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* progress and score */
+    .status{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .progress{
+      flex:1;
+      height:10px;
+      background: rgba(255,255,255,0.03);
+      border-radius:999px;
+      overflow:hidden;
+      margin-right:12px;
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+    .progress > i{
+      display:block;
+      width:0%;
+      height:100%;
+      background: linear-gradient(90deg, var(--brand-accent-start), var(--brand-accent-end));
+      transition: width 420ms cubic-bezier(.2,.9,.2,1);
+      box-shadow: inset 0 -6px 18px rgba(0,0,0,0.18);
+    }
+    .badge{
+      min-width:86px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:700;
+      color:var(--text);
+      font-size:14px;
+      border: 1px solid rgba(255,255,255,0.03);
+      text-align:center;
+    }
+
+    /* email preview */
+    .email{
+      text-align:left;
+      background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.008));
+      border-radius:10px;
+      padding:16px;
+      margin-bottom:16px;
+      color:var(--text);
+      box-shadow: 0 2px 12px rgba(2,6,23,0.5);
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+    .email .from{ font-weight:700; font-size:14px; color:var(--text); }
+    .email .subject{ font-weight:700; margin-top:6px; color:var(--text); font-size:15px; }
+    .email .preview{ margin-top:8px; color:var(--muted); font-size:13px; font-style:italic; }
+
+    /* actions */
+    .actions{ display:flex; gap:12px; justify-content:center; margin-top:4px; }
+    .btn{
+      border:0;
+      padding:12px 18px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:14px;
+      transition:transform 120ms ease, box-shadow 120ms ease, opacity 120ms;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      min-width:160px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    }
+    .btn:active{ transform:translateY(1px); }
+
+    .btn-phish{
+      background: linear-gradient(180deg, var(--brand-danger), #dc2626);
+    }
+    .btn-phish:hover{ box-shadow: 0 18px 40px rgba(239,68,68,0.18); }
+
+    .btn-legit{
+      background: linear-gradient(180deg, var(--brand-accent-start), var(--brand-accent-end));
+    }
+    .btn-legit:hover{ box-shadow: 0 18px 40px rgba(138,56,245,0.14); }
+
+    /* feedback */
+    .feedback{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:10px;
+      font-weight:700;
+      min-height:44px;
+      transition: all 240ms ease;
+      text-align:left;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--text);
+    }
+    .feedback.correct{
+      background: linear-gradient(90deg, rgba(16,185,129,0.08), rgba(16,185,129,0.04));
+      color:#0f5132;
+      border: 1px solid rgba(16,185,129,0.06);
+    }
+    .feedback.wrong{
+      background: linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.03));
+      color:#6b021c;
+      border: 1px solid rgba(239,68,68,0.06);
+    }
+
+    /* final screen */
+    .final{ padding:18px; }
+    .final h2{ margin:6px 0 10px 0; font-size:20px; color:var(--text); }
+    .final p{ margin:0 0 12px 0; color:var(--muted); }
+
+    /* side panel */
+    .panel{
+      width:440px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:22px;
+      box-sizing:border-box;
+      color:var(--text);
+      border: 1px solid rgba(255,255,255,0.03);
+      align-self:flex-start;
+      box-shadow: var(--shadow);
+      display:block;
+    }
+    .panel h3{ margin:0 0 8px 0; color:var(--text); font-size:16px; font-weight:800; }
+    .panel p{ margin:0 0 10px 0; color:var(--muted); font-size:13px; line-height:1.45; }
+    .panel .cta{ margin-top:14px; display:flex; gap:10px; align-items:center; }
+    .link{
+      color:var(--text);
+      background: linear-gradient(90deg, rgba(34,144,199,0.06), rgba(138,56,245,0.06));
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:700;
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,0.02);
+      font-size:13px;
+    }
+
+    /* responsive */
+    @media (max-width:980px){
+      .wrap{ max-width:640px; gap:18px; padding:12px; }
+      .panel{ display:none; }
+      .card{ width:100%; max-width:640px; }
+    }
+
+    /* fade animation */
+    .fade-in{ animation: fadeIn 320ms ease both; }
+    @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none; } }
+
+    /* small accessibility focus style */
+    .btn:focus{ outline:3px solid rgba(138,56,245,0.18); outline-offset:3px; }
   </style>
 </head>
-
 <body>
 
-  <!-- ⭐ Add your logo here -->
-  <div class="logo">
-    <img src="CIS Logo for Web_White-01.png" alt="CyberIntelligent Systems">
-  </div>
+  <div class="wrap">
 
-  <div class="card">
-    <h2>🎣 Spot the Phish!</h2>
-    <p id="question-count"></p>
-    <div class="email" id="email-content"></div>
-    <div>
-      <button onclick="checkAnswer('phish')">🐟 Phish</button>
-      <button onclick="checkAnswer('legit')">✅ Legit</button>
+    <!-- Game card -->
+    <div class="card" role="application" aria-label="Spot the Phish game">
+
+      <!-- logo (keep your file name as-is in the same folder) -->
+      <div class="logo" aria-hidden="true">
+        <img src="CIS Logo for Web_White-01.png" alt="Cyber Intelligent Systems logo">
+      </div>
+
+      <div class="title">
+        <h1>🎣 Spot the Phish!</h1>
+      </div>
+
+      <p class="subtitle">Tell us: is this email legitimate or phishing? (Holiday edition)</p>
+
+      <!-- status -->
+      <div class="status" aria-hidden="true">
+        <div class="progress" title="progress">
+          <i id="progBar" style="width:0%"></i>
+        </div>
+        <div class="badge" id="scoreBadge">Score: 0</div>
+      </div>
+
+      <!-- email preview -->
+      <div class="email" id="email-content" aria-live="polite">
+        <!-- dynamically injected -->
+      </div>
+
+      <!-- action buttons -->
+      <div class="actions" role="group" aria-label="Choose whether phishing or legitimate">
+        <button class="btn btn-phish" id="btnPhish" onclick="checkAnswer('phish')">🐟 This is a phish</button>
+        <button class="btn btn-legit" id="btnLegit" onclick="checkAnswer('legit')">✅ This is legit</button>
+      </div>
+
+      <!-- feedback -->
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+
+      <!-- final container (replaces inner card content on finish) -->
+      <div id="final" class="final" style="display:none;"></div>
+
     </div>
-    <div class="feedback" id="feedback"></div>
+
+    <!-- Side panel with tips -->
+    <aside class="panel" aria-hidden="true">
+      <h3>Quick Tips</h3>
+      <p><strong>Look for:</strong> slightly misspelled domains, urgent language, unexpected attachments or links.</p>
+      <p><strong>If unsure:</strong> confirm with the sender via a separate channel (call or internal chat).</p>
+      <p><strong>Need help?</strong> Book a short 15-minute pre-holiday security check with our team.</p>
+
+      <div class="cta">
+        <a class="link" href="mailto:security@yourcompany.com">Email Us</a>
+        <a class="link" href="https://your-username.github.io/spot-the-phish/assets/holiday-cyber-guide.pdf" target="_blank" rel="noopener">Download Guide</a>
+      </div>
+    </aside>
+
   </div>
 
   <script>
+    /* === Data (unchanged) === */
     const emails = [
       {
         sender: 'IT Support <support@micros0ft.com>',
@@ -117,45 +345,110 @@
       }
     ];
 
+    /* === Game state === */
     let current = 0;
     let score = 0;
 
+    /* helper to update UI */
+    function updateProgress(){
+      const pct = Math.round((current / emails.length) * 100);
+      document.getElementById('progBar').style.width = pct + '%';
+      document.getElementById('scoreBadge').textContent = `Score: ${score}`;
+    }
+
+    /* render one email */
     function loadEmail() {
+      // final
       if (current >= emails.length) {
-        document.querySelector('.card').innerHTML = `
+        document.getElementById('email-content').style.display = 'none';
+        document.querySelector('.actions').style.display = 'none';
+        document.getElementById('feedback').style.display = 'none';
+
+        const final = document.getElementById('final');
+        final.style.display = 'block';
+        final.innerHTML = `
           <h2>🎯 Game Over!</h2>
-          <p>You caught ${score} out of ${emails.length} phish.</p>
+          <p>You caught <strong>${score}</strong> out of <strong>${emails.length}</strong> phish.</p>
           <p>Hackers don’t take a vacation — stay sharp this holiday season.</p>
+          <div style="margin-top:12px;display:flex;gap:10px;justify-content:center">
+            <a href="mailto:security@yourcompany.com" style="text-decoration:none"><button class="btn btn-legit">Get Help</button></a>
+            <a href="https://your-username.github.io/spot-the-phish/assets/holiday-cyber-guide.pdf" target="_blank" rel="noopener" style="text-decoration:none"><button class="btn btn-phish">Download Guide</button></a>
+          </div>
         `;
         return;
       }
+
       const e = emails[current];
-      document.getElementById('email-content').innerHTML = `
-        <strong>From:</strong> ${e.sender}<br>
-        <strong>Subject:</strong> ${e.subject}<br>
-        <em>${e.preview}</em>
+      const html = `
+        <div class="from"><span style="color:var(--muted)">From:</span> <span style="color:var(--text);font-weight:700">${e.sender}</span></div>
+        <div class="subject">${e.subject}</div>
+        <div class="preview">${e.preview}</div>
       `;
+      const container = document.getElementById('email-content');
+      container.innerHTML = html;
+      container.classList.add('fade-in');
+      container.style.display = 'block';
       document.getElementById('feedback').textContent = '';
-      document.getElementById('question-count').textContent = `Email ${current + 1} of ${emails.length}`;
+      document.getElementById('feedback').className = 'feedback';
+      updateProgress();
     }
 
+    /* action handler */
     function checkAnswer(choice) {
       const e = emails[current];
-      const feedback = document.getElementById('feedback');
+      const feedbackEl = document.getElementById('feedback');
+
+      // disable buttons briefly to avoid double clicks
+      document.getElementById('btnPhish').disabled = true;
+      document.getElementById('btnLegit').disabled = true;
+
       if (choice === e.type) {
         score++;
-        feedback.textContent = `✅ Correct! ${e.feedback}`;
-        feedback.style.color = 'green';
+        feedbackEl.className = 'feedback correct fade-in';
+        feedbackEl.innerHTML = `✅ Correct! <span style="font-weight:700;color:inherit;margin-left:8px">${e.feedback}</span>`;
       } else {
-        feedback.textContent = `❌ Nope! ${e.feedback}`;
-        feedback.style.color = 'red';
+        feedbackEl.className = 'feedback wrong fade-in';
+        feedbackEl.innerHTML = `❌ Nope! <span style="font-weight:700;color:inherit;margin-left:8px">${e.feedback}</span>`;
       }
+
       current++;
-      setTimeout(loadEmail, 2000);
+      updateProgress();
+
+      // analytics/webhook placeholder (commented)
+      /*
+      try {
+        fetch('https://api.yourdomain.com/webhooks/spot-the-phish', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            token: getToken(),
+            score,
+            questionIndex: current,
+            timestamp: new Date().toISOString()
+          })
+        });
+      } catch(err){ console.warn('webhook failed', err); }
+      */
+
+      setTimeout(()=>{
+        // re-enable
+        document.getElementById('btnPhish').disabled = false;
+        document.getElementById('btnLegit').disabled = false;
+        loadEmail();
+      }, 1200);
     }
 
+    // initial load
     loadEmail();
-  </script>
 
+    /* utility: capture token from URL if used for tracking */
+    function getToken(){
+      try{
+        const u = new URL(window.location.href);
+        return u.searchParams.get('token') || u.searchParams.get('utm_term') || '';
+      } catch(e){ return ''; }
+    }
+
+  </script>
 </body>
 </html>
